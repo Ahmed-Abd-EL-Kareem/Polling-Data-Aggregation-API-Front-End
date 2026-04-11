@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+/* Dark (Stitch default) */
+@theme {
+  --color-background: #0b1326;
+  --color-foreground: #dae2fd;
+
+  --color-surface: #0b1326;
+  --color-surface-container-lowest: #060e20;
+  --color-surface-container-low: #131b2e;
+  --color-surface-container: #171f33;
+  --color-surface-container-high: #222a3d;
+  --color-surface-container-highest: #2d3449;
+  --color-surface-bright: #31394d;
+
+  --color-primary: #c0c1ff;
+  --color-primary-container: #8083ff;
+  --color-on-primary: #1000a9;
+
+  --color-secondary: #4edea3;
+  --color-secondary-container: #00a572;
+
+  --color-on-surface: #dae2fd;
+  --color-on-surface-variant: #c7c4d7;
+  --color-outline-variant: #464554;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+
+  --color-border: #464554;
+  --color-ring: #c0c1ff;
+
+  --color-muted: #222a3d;
+  --color-muted-foreground: #c7c4d7;
+  --color-card: #171f33;
+
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Light theme tokens */
+.light {
+  --color-background: #f4f6fc;
+  --color-foreground: #0f172a;
+
+  --color-surface: #ffffff;
+  --color-surface-container-lowest: #eef2ff;
+  --color-surface-container-low: #e8ecff;
+  --color-surface-container: #ffffff;
+  --color-surface-container-high: #f1f4ff;
+  --color-surface-container-highest: #e4e9ff;
+  --color-surface-bright: #ffffff;
+
+  --color-primary: #494bd6;
+  --color-primary-container: #8083ff;
+  --color-on-primary: #ffffff;
+
+  --color-secondary: #008f62;
+  --color-secondary-container: #00a572;
+
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #475569;
+  --color-outline-variant: #cbd5e1;
+
+  --color-error: #b91c1c;
+  --color-error-container: #fee2e2;
+  --color-on-error: #ffffff;
+
+  --color-border: #e2e8f0;
+  --color-ring: #494bd6;
+
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-card: #ffffff;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply antialiased text-base leading-relaxed transition-colors duration-300;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-on-surface);
+  }
+}
+
+@utility glass-panel {
+  @apply bg-surface-bright/20 backdrop-blur-xl shadow-[0_20px_40px_rgba(11,19,38,0.4)] dark:shadow-[0_20px_40px_rgba(11,19,38,0.4)];
+}
+
+@utility text-display {
+  @apply font-bold tracking-tight text-on-surface;
+}
+
+@utility text-label {
+  @apply font-medium uppercase tracking-widest text-on-surface-variant text-xs;
+}
+
+@utility gradient-primary {
+  background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+}
+
+.light .gradient-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #494bd6 100%);
+}
+
+[dir='rtl'] {
+  font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+}
