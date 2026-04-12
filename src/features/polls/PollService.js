@@ -10,6 +10,11 @@ export const getPollDetails = async (id) => {
   return data;
 };
 
+export const getPollsByUser = async (userId, params) => {
+  const { data } = await api.get(`/api/v1/polls/user/${userId}`, { params });
+  return data;
+};
+
 export const getPollOptions = async (id) => {
   const { data } = await api.get(`/api/v1/options/${id}`);
   return data;
@@ -27,6 +32,11 @@ export const createOption = async (optionData) => {
 
 export const deletePoll = async (id) => {
   const { data } = await api.delete(`/api/v1/polls/${id}`);
+  return data;
+};
+
+export const updatePoll = async (id, pollData) => {
+  const { data } = await api.patch(`/api/v1/polls/${id}`, pollData);
   return data;
 };
 

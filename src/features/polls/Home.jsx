@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -14,26 +14,44 @@ import { usePollCardsReveal } from '../../hooks/usePollCardsReveal';
 export function Home() {
   const { t } = useTranslation();
   const token = useAuthStore((s) => s.token);
-  const [q, setQ] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchTemp, setSearchTemp] = useState(''); // For debouncing
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState('createdAt');
+  const [category, setCategory] = useState('');
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['polls'],
-    queryFn: () => getPolls(),
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(searchTemp);
+      setPage(1); // reset to page 1 on search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTemp]);
+
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['polls', { page, limit: 12, search, sort, category }],
+    queryFn: () => {
+      const params = { page, limit: 12, sort };
+      if (search) params.search = search;
+      if (category && category !== 'All') params.category = category;
+      return getPolls(params);
+    },
   });
 
   const pollList = data?.data ?? [];
-  const filtered = useMemo(() => {
-    if (!q.trim()) return pollList;
-    const s = q.toLowerCase();
-    return pollList.filter((p) => {
-      const title = (p.title || '').toLowerCase();
-      const desc = (p.description || '').toLowerCase();
-      const creator = (p.createdBy?.name || '').toLowerCase();
-      return title.includes(s) || desc.includes(s) || creator.includes(s);
-    });
-  }, [pollList, q]);
+  const totalResults = data?.results ?? 0;
+  
+  // Update state when sorting/category changes to reset page
+  const handleSortChange = (e) => {
+    setSort(e.target.value);
+    setPage(1);
+  };
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+    setPage(1);
+  };
 
-  const gridRef = usePollCardsReveal([filtered.length, isLoading]);
+  const gridRef = usePollCardsReveal([pollList.length, isLoading]);
 
   if (isLoading) {
     return (
@@ -89,18 +107,25 @@ export function Home() {
             <div className="relative flex-grow">
               <Search className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-on-surface-variant" />
               <Input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
+                value={searchTemp}
+                onChange={(e) => setSearchTemp(e.target.value)}
                 className="h-12 rounded-xl border-none ps-12"
                 placeholder={t('searchPlaceholder')}
               />
             </div>
             <div className="flex flex-wrap gap-3">
-              <select className="h-12 cursor-pointer rounded-xl border-none bg-surface-container-low px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/50">
-                <option>{t('allCategories')}</option>
+              <select value={category} onChange={handleCategoryChange} className="h-12 cursor-pointer rounded-xl border-none bg-surface-container-low px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/50">
+                <option value="">{t('allCategories')}</option>
+                <option value="Technology">Technology</option>
+                <option value="Politics">Politics</option>
+                <option value="Lifestyle">Lifestyle</option>
+                <option value="Design">Design</option>
+                <option value="Entertainment">Entertainment</option>
               </select>
-              <select className="h-12 cursor-pointer rounded-xl border-none bg-surface-container-low px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/50">
-                <option>{t('sortNewest')}</option>
+              <select value={sort} onChange={handleSortChange} className="h-12 cursor-pointer rounded-xl border-none bg-surface-container-low px-4 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/50">
+                <option value="createdAt">{t('sortNewest')}</option>
+                <option value="-createdAt">Oldest</option>
+                <option value="-votes">Most Voted</option>
               </select>
             </div>
           </div>
@@ -109,14 +134,35 @@ export function Home() {
 
       <section className="px-6 py-12 md:px-12">
         <div ref={gridRef} className="mx-auto grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {filtered.length === 0 ? (
+          {pollList.length === 0 && !isFetching ? (
             <div className="col-span-full rounded-3xl border-2 border-dashed border-outline-variant/30 p-16 text-center">
               <h3 className="mb-2 text-xl font-bold">{t('noPolls')}</h3>
               <p className="text-on-surface-variant">{t('noPollsHint')}</p>
             </div>
           ) : (
-            filtered.map((poll, i) => <PollCard key={poll._id || poll.id} poll={poll} index={i} />)
+            pollList.map((poll, i) => <PollCard key={poll?._id || poll?.id || `poll-fallback-${i}`} poll={poll} index={i} />)
           )}
+        </div>
+        
+        {/* Pagination Controls */}
+        <div className="mx-auto mt-12 flex max-w-7xl items-center justify-between">
+          <Button 
+            variant="outline" 
+            disabled={page === 1 || isFetching} 
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+          <span className="text-sm font-medium text-on-surface-variant">
+            Page {page}
+          </span>
+          <Button 
+            variant="outline" 
+            disabled={pollList.length < 12 || isFetching} 
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+          </Button>
         </div>
       </section>
     </div>

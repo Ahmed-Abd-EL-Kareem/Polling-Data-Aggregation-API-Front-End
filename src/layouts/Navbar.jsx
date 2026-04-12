@@ -82,9 +82,13 @@ export function Navbar() {
               onClick={() => navigate('/profile')}
               className="h-8 w-8 overflow-hidden rounded-full border border-outline-variant/20"
             >
-              <span className="flex h-full w-full items-center justify-center bg-surface-container-highest text-xs font-bold text-primary">
-                {(user.name || '?').slice(0, 1).toUpperCase()}
-              </span>
+              {user?.image ? (
+                <img src={user.image} alt={user.name} className="h-full w-full object-cover" />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center bg-surface-container-highest text-xs font-bold text-primary">
+                  {(user.name || '?').slice(0, 1).toUpperCase()}
+                </span>
+              )}
             </button>
           )}
 
