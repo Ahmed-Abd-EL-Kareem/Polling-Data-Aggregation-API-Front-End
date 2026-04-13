@@ -60,11 +60,11 @@ export function AdminDashboard() {
   const pollList = pollsData?.data ?? [];
 
   return (
-    <div ref={rootRef} className="bg-[#0b1326] text-[#dae2fd] min-h-screen pb-16 pt-24 font-sans">
+    <div ref={rootRef} className="bg-background text-on-background min-h-screen pb-16 pt-24 font-sans">
       <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-8">
         
         <header className="mb-8">
-          <h1 className="text-3xl font-extrabold tracking-tighter text-[#dae2fd]">Dashboard Overview</h1>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-on-background">Dashboard Overview</h1>
           <p className="text-on-surface-variant text-sm font-medium">Welcome back to the command center.</p>
         </header>
 

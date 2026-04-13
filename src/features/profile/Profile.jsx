@@ -142,7 +142,7 @@ export function Profile() {
   }
 
   return (
-    <div className="bg-[#0b1326] text-[#dae2fd] min-h-screen pt-28 pb-24 font-sans px-4 md:px-8">
+    <div className="bg-background text-on-background min-h-screen pt-28 pb-24 font-sans px-4 md:px-8">
       <div className="max-w-5xl mx-auto w-full">
         <section className="mb-12">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">

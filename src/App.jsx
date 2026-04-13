@@ -24,6 +24,12 @@ const Profile = lazy(() =>
 const AdminDashboard = lazy(() =>
   import('./features/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
 );
+const ForgotPassword = lazy(() =>
+  import('./features/auth/ForgotPassword').then((m) => ({ default: m.ForgotPassword }))
+);
+const ResetPassword = lazy(() =>
+  import('./features/auth/ResetPassword').then((m) => ({ default: m.ResetPassword }))
+);
 
 function PageFallback() {
   return (
@@ -74,6 +80,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/poll/:id" element={<PollDetails />} />
             <Route
               path="/create"

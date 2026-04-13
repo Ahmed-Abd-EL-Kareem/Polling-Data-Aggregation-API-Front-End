@@ -101,7 +101,9 @@ export function Login() {
               >
                 {t('password')}
               </label>
-              <span className="text-[11px] font-medium text-primary/60">{t('forgotPassword')}</span>
+              <Link to="/forgot-password" className="text-[11px] font-medium text-primary/60 hover:text-primary transition-colors hover:underline">
+                {t('forgotPassword')}
+              </Link>
             </div>
             <Input
               id="login-password"
